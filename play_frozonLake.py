@@ -52,12 +52,3 @@ if __name__ == "__main__":
         if done:
             print("Finished with reward", reward)
             break
-
-# if __name__ == "__main__":
-#     env = gym.make("FrozenLake-v0")
-#     observation = env.reset()
-#
-#     for _ in range(1000):
-#         env.render()
-#         action = env.action_space.sample()  # your agent here (this takes random actions)
-#         observation, reward, done, info = env.step(action)
