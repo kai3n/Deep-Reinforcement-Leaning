@@ -28,7 +28,7 @@ if __name__ == "__main__":
     # Set learning parameters
     # Discount factor
     dis = .99
-    num_episodes = 2000
+    num_episodes = 50
 
     # create lists to contain total reward and steps per episode
     rList = []
@@ -41,7 +41,7 @@ if __name__ == "__main__":
         # The Q-Table leaerning algorithm
         while not done:
             # Choose an action by greedily (with noise) picking from Q table
-            action = rargmax(Q[state, :] + np.random.randn(1, env.action_space.n) / (i + 1))
+            action = np.argmax((Q[state, :] + np.random.randn(1, env.action_space.n) / (i + 1)))
 
             # Get new state and reward from environment
             new_state, reward, done, _ = env.step(action)

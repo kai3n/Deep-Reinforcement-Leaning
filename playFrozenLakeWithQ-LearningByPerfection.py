@@ -1,5 +1,4 @@
 import numpy as np
-import tensorflow
 import matplotlib.pyplot as plt
 import gym
 from gym.envs.registration import register
@@ -17,7 +16,7 @@ if __name__ == "__main__":
     register(
         id='FrozenLake-v3',
         entry_point='gym.envs.toy_text:FrozenLakeEnv',
-        kwargs={'map_name': '4x4', 'is_slippery': False}
+        kwargs={'map_name': '4x4', 'is_slippery': True}
     )
 
     env = gym.make('FrozenLake-v3')
@@ -26,8 +25,11 @@ if __name__ == "__main__":
     # Initialize table with all zeros
     Q = np.zeros([env.observation_space.n, env.action_space.n])  # Q(s,a) 16 states, 4 actions
     # Set learning parameters
-    num_episodes = 1000
-
+    # Discount factor
+    dis = .99
+    num_episodes = 2000
+    # do not take Q^'s opinion seriously
+    learning_rate = 0.85
     # create lists to contain total reward and steps per episode
     rList = []
     for i in range(num_episodes):
@@ -38,13 +40,14 @@ if __name__ == "__main__":
 
         # The Q-Table leaerning algorithm
         while not done:
-            action = rargmax(Q[state, :])
+            # Choose an action by greedily (with noise) picking from Q table
+            action = np.argmax((Q[state, :] + np.random.randn(1, env.action_space.n) / (i + 1)))
 
             # Get new state and reward from environment
             new_state, reward, done, _ = env.step(action)
 
-            # Update Q-Table with new knowledge using learning rate
-            Q[state, action] = reward + np.max(Q[new_state,:])
+            # Update Q-Table with new knowledge using decay rate
+            Q[state, action] = (1-learning_rate)*Q[state, action] + learning_rate*(reward + dis * np.max(Q[new_state, :]))
 
             rAll += reward
             state = new_state
